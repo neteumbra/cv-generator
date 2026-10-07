@@ -1,5 +1,31 @@
-import { View, Text, StyleSheet } from '@react-pdf/renderer';
+import { View, Text, Link, StyleSheet } from '@react-pdf/renderer';
 import { CvSection as CvSectionType } from '@/types';
+
+const MARKDOWN_LINK = /^\[([^\]]+)\]\(([^)]+)\)$/;
+
+function normalizeUrl(url: string): string {
+  return /^(https?:|mailto:|tel:)/i.test(url) ? url : `https://${url}`;
+}
+
+function DetailText({ text }: { text: string }) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g).filter(Boolean);
+
+  return (
+    <Text style={sectionStyles.detailItem}>
+      {parts.map((part, index) => {
+        const match = part.match(MARKDOWN_LINK);
+        if (match) {
+          return (
+            <Link key={index} src={normalizeUrl(match[2])} style={{ color: '#000000' }}>
+              {match[1]}
+            </Link>
+          );
+        }
+        return <Text key={index}>{part}</Text>;
+      })}
+    </Text>
+  );
+}
 
 export const sectionStyles = StyleSheet.create({
   section: {
@@ -77,7 +103,7 @@ export function Section({ section }: CvSectionProps) {
               {item.details.map((detail, detailIndex) => (
                 <View key={detailIndex} style={{ flexDirection: 'row' }}>
                   <Text style={sectionStyles.bullet}>• </Text>
-                  <Text style={sectionStyles.detailItem}>{detail}</Text>
+                  <DetailText text={detail} />
                 </View>
               ))}
             </View>
