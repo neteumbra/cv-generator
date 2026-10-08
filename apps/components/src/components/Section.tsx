@@ -100,12 +100,18 @@ export function Section({ section }: CvSectionProps) {
           
           {item.details && (
             <View style={sectionStyles.detailsList}>
-              {item.details.map((detail, detailIndex) => (
-                <View key={detailIndex} style={{ flexDirection: 'row' }}>
-                  <Text style={sectionStyles.bullet}>• </Text>
-                  <DetailText text={detail} />
-                </View>
-              ))}
+              {item.plain
+                ? item.details.map((detail, detailIndex) => (
+                    <Text key={detailIndex} style={sectionStyles.detailItem}>
+                      <DetailText text={detail} />
+                    </Text>
+                  ))
+                : item.details.map((detail, detailIndex) => (
+                    <View key={detailIndex} style={{ flexDirection: 'row' }}>
+                      <Text style={sectionStyles.bullet}>• </Text>
+                      <DetailText text={detail} />
+                    </View>
+                  ))}
             </View>
           )}
         </View>
